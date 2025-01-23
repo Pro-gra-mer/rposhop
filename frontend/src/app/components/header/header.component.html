@@ -16,13 +16,36 @@
     </h1>
 
     <!-- Iconos -->
-    <div class="flex items-center space-x-6">
+    <div class="flex items-center space-x-6 relative">
+      <!-- Botón Identifícate -->
       <button
         class="text-primary hover:text-accent flex items-center space-x-2"
+        (click)="toggleMenu()"
       >
         <i class="fas fa-user text-2xl"></i>
         <span>Identifícate</span>
       </button>
+
+      <!-- Submenú -->
+      <div
+        class="absolute top-12 right-0 bg-white shadow-md border rounded-md py-2 w-48"
+        *ngIf="menuOpen"
+      >
+        <button
+          class="block w-full text-left text-primary px-4 py-2 hover:bg-accent hover:text-white"
+          (click)="openLoginModal()"
+        >
+          Iniciar Sesión
+        </button>
+        <button
+          class="block w-full text-left text-primary px-4 py-2 hover:bg-accent hover:text-white"
+          (click)="openRegisterModal()"
+        >
+          Regístrate
+        </button>
+      </div>
+
+      <!-- Botón Carrito -->
       <button class="relative text-pretty hover:text-accent">
         <i class="fas fa-shopping-cart text-2xl"></i>
         <span
@@ -30,6 +53,141 @@
           >2</span
         >
       </button>
+    </div>
+  </div>
+
+  <!-- Modal del formulario de inicio de sesión -->
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    *ngIf="loginModalOpen"
+  >
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+      <h2 class="text-2xl font-bold text-primary mb-4">Iniciar Sesión</h2>
+      <form>
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <div class="mb-4 text-right">
+          <a
+            href="#"
+            class="text-sm text-accent hover:underline"
+            (click)="openForgotPasswordModal()"
+          >
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="button"
+            class="px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
+            (click)="closeLoginModal()"
+          >
+            Iniciar Sesión
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal del formulario de registro -->
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    *ngIf="registerModalOpen"
+  >
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+      <h2 class="text-2xl font-bold text-primary mb-4">Regístrate</h2>
+      <form>
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-medium text-gray-700">
+            Nombre
+          </label>
+          <input
+            type="text"
+            id="name"
+            class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-gray-700">
+            Correo Electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-sm font-medium text-gray-700">
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="button"
+            class="px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
+            (click)="closeRegisterModal()"
+          >
+            Registrarse
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal "Olvidaste tu contraseña" -->
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    *ngIf="forgotPasswordModalOpen"
+  >
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+      <h2 class="text-2xl font-bold text-primary mb-4">Recuperar Contraseña</h2>
+      <form>
+        <div class="mb-4">
+          <label
+            for="forgot-email"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Ingresa tu correo electrónico
+          </label>
+          <input
+            type="email"
+            id="forgot-email"
+            class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+          />
+        </div>
+        <div class="flex justify-end">
+          <button
+            type="button"
+            class="px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
+            (click)="closeForgotPasswordModal()"
+          >
+            Enviar
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </header>

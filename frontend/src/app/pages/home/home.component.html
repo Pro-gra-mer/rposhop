@@ -1,13 +1,14 @@
-<div class="flex">
-  <app-product-card></app-product-card>
-  <!-- Lista de productos -->
+<div class="flex w-full h-full">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Contenido principal -->
   <div class="flex-grow p-4">
     <h2 class="text-xl font-bold mb-4">Productos</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- <app-product-card
-        *ngFor="let product of products"
-        [product]="product"
-      ></app-product-card> -->
+      <app-product-card></app-product-card>
+      <app-product-card></app-product-card>
+      <app-product-card></app-product-card>
     </div>
   </div>
 </div>
