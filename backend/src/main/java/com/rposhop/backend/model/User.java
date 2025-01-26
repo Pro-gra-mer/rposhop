@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,8 +19,14 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false) // Nuevo campo para el rol, obligatorio
+    @Column(nullable = false)
     private String role;
+
+    @Column(nullable = false)
+    private Boolean active; // Refleja la columna 'active' en la tabla
+
+    @Column(name = "activation_token")
+    private String activationToken;
 
     // Getters y Setters
     public Long getId() {
@@ -60,5 +67,21 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
     }
 }

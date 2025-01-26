@@ -1,0 +1,130 @@
+<div class="p-6 max-w-lg mx-auto bg-white rounded-lg shadow-md">
+  <h2 class="text-2xl font-bold text-primary mb-4">Regístrate</h2>
+
+  <!-- Mensaje de éxito o error -->
+  <div
+    *ngIf="message"
+    class="text-sm mb-4"
+    [ngClass]="{
+      'text-green-500': message.startsWith('Registro exitoso'),
+      'text-red-500': !message.startsWith('Registro exitoso')
+    }"
+  >
+    {{ message }}
+  </div>
+
+  <!-- Formulario -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <!-- Nombre -->
+    <div class="mb-4">
+      <label for="name" class="block text-sm font-medium text-gray-700"
+        >Nombre</label
+      >
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        [ngClass]="{
+          'border-red-500': submitted && registerForm.get('name')?.invalid
+        }"
+      />
+      <div
+        *ngIf="submitted && registerForm.get('name')?.errors?.['required']"
+        class="text-red-500 text-sm"
+      >
+        El nombre es obligatorio.
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-4">
+      <label for="email" class="block text-sm font-medium text-gray-700"
+        >Correo Electrónico</label
+      >
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        [ngClass]="{
+          'border-red-500': submitted && registerForm.get('email')?.invalid
+        }"
+      />
+      <div
+        *ngIf="submitted && registerForm.get('email')?.errors?.['required']"
+        class="text-red-500 text-sm"
+      >
+        El correo es obligatorio.
+      </div>
+      <div
+        *ngIf="submitted && registerForm.get('email')?.errors?.['email']"
+        class="text-red-500 text-sm"
+      >
+        Formato de correo inválido.
+      </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="mb-4">
+      <label for="password" class="block text-sm font-medium text-gray-700"
+        >Contraseña</label
+      >
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        [ngClass]="{
+          'border-red-500': submitted && registerForm.get('password')?.invalid
+        }"
+      />
+      <div
+        *ngIf="submitted && registerForm.get('password')?.errors?.['required']"
+        class="text-red-500 text-sm"
+      >
+        La contraseña es obligatoria.
+      </div>
+      <div
+        *ngIf="submitted && registerForm.get('password')?.errors?.['pattern']"
+        class="text-red-500 text-sm"
+      >
+        Debe incluir letras, números y símbolos.
+      </div>
+    </div>
+
+    <!-- Confirmar Contraseña -->
+    <div class="mb-4">
+      <label
+        for="confirmPassword"
+        class="block text-sm font-medium text-gray-700"
+        >Confirmar Contraseña</label
+      >
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        [ngClass]="{
+          'border-red-500': submitted && registerForm.hasError('mismatch')
+        }"
+      />
+      <div
+        *ngIf="submitted && registerForm.hasError('mismatch')"
+        class="text-red-500 text-sm"
+      >
+        Las contraseñas no coinciden.
+      </div>
+    </div>
+
+    <!-- Botón -->
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        class="px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
+      >
+        Registrarse
+      </button>
+    </div>
+  </form>
+</div>

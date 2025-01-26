@@ -1,0 +1,73 @@
+<div class="max-w-md mx-auto p-6 bg-white shadow-lg rounded-md">
+  <h2 class="text-2xl font-bold text-primary mb-4">Iniciar Sesión</h2>
+
+  <!-- Mensaje de éxito o error -->
+  <div
+    *ngIf="message"
+    class="text-sm mb-4"
+    [ngClass]="{ 'text-green-500': isSuccess, 'text-red-500': !isSuccess }"
+  >
+    {{ message }}
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <!-- Campo Email -->
+    <div class="mb-4">
+      <label for="email" class="block text-sm font-medium text-gray-700">
+        Correo Electrónico
+      </label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+      />
+      <div
+        *ngIf="submitted && loginForm.controls['email'].errors"
+        class="text-red-500 text-sm"
+      >
+        <span *ngIf="loginForm.controls['email'].errors['required']">
+          El correo es obligatorio.
+        </span>
+        <span *ngIf="loginForm.controls['email'].errors['email']">
+          Introduce un correo válido.
+        </span>
+      </div>
+    </div>
+
+    <!-- Campo Contraseña -->
+    <div class="mb-4">
+      <label for="password" class="block text-sm font-medium text-gray-700">
+        Contraseña
+      </label>
+      <input
+        id="password"
+        type="password"
+        formControlName="password"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+      />
+      <div
+        *ngIf="submitted && loginForm.controls['password'].errors"
+        class="text-red-500 text-sm"
+      >
+        <span *ngIf="loginForm.controls['password'].errors['required']">
+          La contraseña es obligatoria.
+        </span>
+        <span *ngIf="loginForm.controls['password'].errors['minlength']">
+          La contraseña debe tener al menos 8 caracteres.
+        </span>
+      </div>
+    </div>
+
+    <!-- Botón de inicio de sesión -->
+    <div class="flex justify-end">
+      <button
+        type="submit"
+        class="px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
+        [disabled]="isLoading || loginForm.invalid"
+      >
+        {{ isLoading ? "Cargando..." : "Iniciar Sesión" }}
+      </button>
+    </div>
+  </form>
+</div>

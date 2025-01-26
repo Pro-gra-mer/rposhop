@@ -1,47 +1,64 @@
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { RegisterComponent } from '../register/register.component';
+
+import { Router } from '@angular/router';
+import { LoginComponent } from '../login/login.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RegisterComponent, LoginComponent],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css',
+  styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent {
-  menuOpen = false;
-  loginModalOpen = false;
-  forgotPasswordModalOpen = false;
-  registerModalOpen = false;
+export class HeaderComponent implements OnInit {
+  menuOpen = false; // Control del submenú
+  isLoggedIn = false; // Estado del usuario logueado
+  isRegisterModalOpen = false; // Estado del modal de registro
+  isLoginModalOpen = false;
+
+  constructor(public router: Router) {}
+
+  ngOnInit() {
+    // Verifica si localStorage está disponible antes de usarlo
+    if (typeof window !== 'undefined' && localStorage.getItem('authToken')) {
+      this.isLoggedIn = !!localStorage.getItem('authToken');
+    } else {
+      this.isLoggedIn = false;
+    }
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
-  openLoginModal() {
-    this.menuOpen = false;
-    this.loginModalOpen = true;
-  }
-
-  closeLoginModal() {
-    this.loginModalOpen = false;
-  }
-
-  openForgotPasswordModal() {
-    this.loginModalOpen = false;
-    this.forgotPasswordModalOpen = true;
-  }
-
-  closeForgotPasswordModal() {
-    this.forgotPasswordModalOpen = false;
-  }
-
   openRegisterModal() {
-    this.menuOpen = false;
-    this.registerModalOpen = true;
+    this.menuOpen = false; // Cierra el submenú
+    this.isRegisterModalOpen = true; // Abre el modal de registro
   }
 
   closeRegisterModal() {
-    this.registerModalOpen = false;
+    this.isRegisterModalOpen = false;
+  }
+
+  openLoginModal(): void {
+    this.isLoginModalOpen = true;
+  }
+
+  closeLoginModal(): void {
+    this.isLoginModalOpen = false;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
+  logout() {
+    // Eliminar token y datos de usuario al cerrar sesión
+    localStorage.removeItem('authToken');
+    this.isLoggedIn = false;
+    this.router.navigate(['/']); // Redirigir al home
   }
 }

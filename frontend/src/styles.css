@@ -3,7 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 /* Reset de estilos básicos */
-* {
+html,
+body {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
