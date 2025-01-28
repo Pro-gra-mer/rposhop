@@ -1,130 +1,135 @@
-<div class="p-6 max-w-lg mx-auto bg-white rounded-lg shadow-md">
-  <h2 class="text-2xl font-bold text-primary mb-4">Regístrate</h2>
+<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+  <h2 class="text-2xl font-bold text-primary mb-4 text-center">Registro</h2>
 
-  <!-- Mensaje de éxito o error -->
-  <div
-    *ngIf="message"
-    class="text-sm mb-4"
-    [ngClass]="{
-      'text-green-500': message.startsWith('Registro exitoso'),
-      'text-red-500': !message.startsWith('Registro exitoso')
-    }"
-  >
-    {{ message }}
-  </div>
-
-  <!-- Formulario -->
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <!-- Nombre -->
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Name field -->
     <div class="mb-4">
-      <label for="name" class="block text-sm font-medium text-gray-700"
-        >Nombre</label
-      >
+      <label for="name" class="block text-sm font-medium text-gray-700">
+        Nombre
+      </label>
       <input
         id="name"
         type="text"
         formControlName="name"
-        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-        [ngClass]="{
-          'border-red-500': submitted && registerForm.get('name')?.invalid
-        }"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md"
+        [ngClass]="{ 'border-red-500': isFieldInvalid('name') }"
       />
-      <div
-        *ngIf="submitted && registerForm.get('name')?.errors?.['required']"
-        class="text-red-500 text-sm"
-      >
-        El nombre es obligatorio.
+      <div class="text-red-500 text-sm mt-1">
+        <div *ngIf="isFieldInvalid('name') && f['name'].errors?.['required']">
+          El nombre es obligatorio.
+        </div>
+        <div *ngIf="isFieldInvalid('name') && f['name'].errors?.['minlength']">
+          El nombre debe tener al menos 3 caracteres.
+        </div>
       </div>
     </div>
 
-    <!-- Email -->
+    <!-- Email field -->
     <div class="mb-4">
-      <label for="email" class="block text-sm font-medium text-gray-700"
-        >Correo Electrónico</label
-      >
+      <label for="email" class="block text-sm font-medium text-gray-700">
+        Email
+      </label>
       <input
         id="email"
         type="email"
         formControlName="email"
-        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-        [ngClass]="{
-          'border-red-500': submitted && registerForm.get('email')?.invalid
-        }"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md"
+        [ngClass]="{ 'border-red-500': isFieldInvalid('email') }"
       />
-      <div
-        *ngIf="submitted && registerForm.get('email')?.errors?.['required']"
-        class="text-red-500 text-sm"
-      >
-        El correo es obligatorio.
-      </div>
-      <div
-        *ngIf="submitted && registerForm.get('email')?.errors?.['email']"
-        class="text-red-500 text-sm"
-      >
-        Formato de correo inválido.
+      <div class="text-red-500 text-sm mt-1">
+        <div *ngIf="isFieldInvalid('email') && f['email'].errors?.['required']">
+          El email es obligatorio.
+        </div>
+        <div *ngIf="isFieldInvalid('email') && f['email'].errors?.['email']">
+          Por favor, introduce un email válido.
+        </div>
+        <!-- Error backend email existe -->
+        <div *ngIf="f['email'].errors?.['emailExists']">
+          Este email ya está registrado. Por favor, utiliza otro email.
+        </div>
       </div>
     </div>
 
-    <!-- Contraseña -->
+    <!-- Password field -->
     <div class="mb-4">
-      <label for="password" class="block text-sm font-medium text-gray-700"
-        >Contraseña</label
-      >
+      <label for="password" class="block text-sm font-medium text-gray-700">
+        Contraseña
+      </label>
       <input
         id="password"
         type="password"
         formControlName="password"
-        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-        [ngClass]="{
-          'border-red-500': submitted && registerForm.get('password')?.invalid
-        }"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md"
+        [ngClass]="{ 'border-red-500': isFieldInvalid('password') }"
       />
-      <div
-        *ngIf="submitted && registerForm.get('password')?.errors?.['required']"
-        class="text-red-500 text-sm"
-      >
-        La contraseña es obligatoria.
-      </div>
-      <div
-        *ngIf="submitted && registerForm.get('password')?.errors?.['pattern']"
-        class="text-red-500 text-sm"
-      >
-        Debe incluir letras, números y símbolos.
+      <div class="text-red-500 text-sm mt-1">
+        <div
+          *ngIf="isFieldInvalid('password') && f['password'].errors?.['required']"
+        >
+          La contraseña es obligatoria.
+        </div>
+        <div
+          *ngIf="isFieldInvalid('password') && f['password'].errors?.['minlength']"
+        >
+          La contraseña debe tener al menos 8 caracteres.
+        </div>
+        <div
+          *ngIf="isFieldInvalid('password') && f['password'].errors?.['pattern']"
+        >
+          La contraseña debe incluir al menos una letra mayúscula, un número y
+          un carácter especial.
+        </div>
       </div>
     </div>
 
-    <!-- Confirmar Contraseña -->
+    <!-- Confirm Password field -->
     <div class="mb-4">
       <label
         for="confirmPassword"
         class="block text-sm font-medium text-gray-700"
-        >Confirmar Contraseña</label
       >
+        Confirmar Contraseña
+      </label>
       <input
         id="confirmPassword"
         type="password"
         formControlName="confirmPassword"
-        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-        [ngClass]="{
-          'border-red-500': submitted && registerForm.hasError('mismatch')
-        }"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md"
+        [ngClass]="{ 'border-red-500': isFieldInvalid('confirmPassword') }"
       />
-      <div
-        *ngIf="submitted && registerForm.hasError('mismatch')"
-        class="text-red-500 text-sm"
-      >
-        Las contraseñas no coinciden.
+      <div class="text-red-500 text-sm mt-1">
+        <div
+          *ngIf="isFieldInvalid('confirmPassword') && f['confirmPassword'].errors?.['required']"
+        >
+          La confirmación de contraseña es obligatoria.
+        </div>
+        <div
+          *ngIf="registerForm.errors?.['mismatch'] && f['confirmPassword'].touched"
+        >
+          Las contraseñas no coinciden.
+        </div>
       </div>
     </div>
 
-    <!-- Botón -->
-    <div class="flex justify-end">
-      <button
-        type="submit"
-        class="px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
-      >
-        Registrarse
-      </button>
+    <!-- Submit button -->
+    <button
+      type="submit"
+      class="w-full px-4 py-2 bg-accent text-white rounded-md hover:bg-opacity-80"
+      [disabled]="registerForm.invalid || isLoading"
+    >
+      {{ isLoading ? "Registrando..." : "Registrarse" }}
+    </button>
+
+    <!-- Response message -->
+    <div
+      *ngIf="message"
+      class="mt-4 p-3 rounded"
+      [ngClass]="{
+        'bg-green-100 text-green-600': message.includes('exitoso'),
+        'bg-red-100 text-red-600': message.includes('Error')
+      }"
+    >
+      {{ message }}
     </div>
   </form>
 </div>

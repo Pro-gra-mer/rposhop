@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -28,15 +29,21 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configuración CORS
                 .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas de Swagger
+                        // Rutas públicas de Swagger (restringidas a localhost)
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml",
                                 "/swagger-ui.html"
-                        ).permitAll()
+                        ).access(new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
                         // Rutas públicas
-                        .requestMatchers("/api/auth/register","/api/auth/activate", "/api/auth/login").permitAll()
+                        .requestMatchers(
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/request-password",
+                                "/api/auth/reset-password",
+                                "/api/auth/activate"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/cart/**").permitAll()
                         // Rutas protegidas por rol
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -57,8 +64,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Cambia esto según el origen del frontend
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setMaxAge(3600L); // Cachea las reglas CORS durante 1 hora
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

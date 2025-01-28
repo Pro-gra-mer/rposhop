@@ -2,6 +2,8 @@ package com.rposhop.backend.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -23,10 +25,16 @@ public class User {
     private String role;
 
     @Column(nullable = false)
-    private Boolean active; // Refleja la columna 'active' en la tabla
+    private Boolean active;
 
     @Column(name = "activation_token")
     private String activationToken;
+
+    @Column(name = "reset_password_token") // Nueva columna para el token de restablecimiento
+    private String resetPasswordToken;
+
+    @Column(name = "token_expiry_date") // Nueva columna para la fecha de expiración
+    private LocalDateTime tokenExpiryDate;
 
     // Getters y Setters
     public Long getId() {
@@ -83,5 +91,21 @@ public class User {
 
     public void setActivationToken(String activationToken) {
         this.activationToken = activationToken;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public LocalDateTime getTokenExpiryDate() {
+        return tokenExpiryDate;
+    }
+
+    public void setTokenExpiryDate(LocalDateTime tokenExpiryDate) {
+        this.tokenExpiryDate = tokenExpiryDate;
     }
 }

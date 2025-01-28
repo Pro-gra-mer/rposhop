@@ -24,6 +24,8 @@ export class LoginComponent {
   isSuccess = false; // Nueva propiedad para diferenciar éxito de error
   @Output() closeMenu = new EventEmitter<void>();
   @Output() loginSuccess = new EventEmitter<void>();
+  isRequestPasswordModalOpen = false;
+  @Output() openRequestPassword = new EventEmitter<void>();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -76,5 +78,14 @@ export class LoginComponent {
     if (modalBackdrop) {
       modalBackdrop.classList.add('hidden'); // Esconde el modal
     }
+  }
+
+  openRequestPasswordModal() {
+    this.isRequestPasswordModalOpen = true;
+    this.openRequestPassword.emit(); // Notifica al padre para abrir el modal
+  }
+
+  closeRequestPasswordModal() {
+    this.isRequestPasswordModalOpen = false;
   }
 }

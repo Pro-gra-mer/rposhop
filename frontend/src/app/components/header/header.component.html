@@ -74,7 +74,20 @@
             (loginSuccess)="isLoggedIn = true; closeLoginModal()"
             (closeMenu)="closeMenu()"
             (close)="closeLoginModal()"
+            (openRequestPassword)="openRequestPasswordModal()"
           ></app-login>
+        </div>
+      </div>
+
+      <!-- Modal para Request Password -->
+      <div
+        class="modal-backdrop fixed inset-0 z-50 flex items-center justify-center"
+        *ngIf="isRequestPasswordModalOpen"
+      >
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <app-request-password
+            (close)="closeRequestPasswordModal()"
+          ></app-request-password>
         </div>
       </div>
 

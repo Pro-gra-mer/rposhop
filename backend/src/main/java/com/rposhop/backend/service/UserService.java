@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +19,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
 
     // Registrar usuario
     public User registerUser(RegisterRequest request) {
@@ -85,4 +89,41 @@ public class UserService {
     public void save(User user) {
         userRepository.save(user);
     }
+
+    public boolean generatePasswordResetToken(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            String token = UUID.randomUUID().toString();
+            user.setResetPasswordToken(token);
+            user.setTokenExpiryDate(LocalDateTime.now().plusHours(1)); // Ejemplo: 1 hora de validez
+            userRepository.save(user);
+            // Envía el token al correo
+            emailService.sendEmail(user.getEmail(), "Restablecer Contraseña",
+                    "Para restablecer tu contraseña, usa el siguiente enlace:\n\nhttp://localhost:4200/reset-password?token=" + token);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean resetPassword(String token, String newPassword) {
+        Optional<User> userOpt = userRepository.findByResetPasswordToken(token);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (user.getTokenExpiryDate().isAfter(LocalDateTime.now())) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                user.setResetPasswordToken(null); // Limpia el token
+                user.setTokenExpiryDate(null);
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean emailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+
 }
