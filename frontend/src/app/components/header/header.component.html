@@ -5,9 +5,9 @@
     <!-- Logo -->
     <div class="flex items-center space-x-2">
       <img src="favicon.ico" alt="Logo" class="h-16 w-16" />
-      <span class="font-bold text-primary text-3xl">
+      <a href="/" class="font-bold text-primary text-3xl">
         <span class="rpo">RPO</span>Shop
-      </span>
+      </a>
     </div>
 
     <!-- Título -->
@@ -17,6 +17,15 @@
 
     <!-- Iconos -->
     <div class="flex items-center space-x-6 relative">
+      <!-- Botón Dashboard (visible solo para admin) -->
+      <button
+        *ngIf="isLoggedIn && isAdmin"
+        (click)="goToDashboard()"
+        class="text-primary hover:text-accent flex items-center space-x-2"
+      >
+        <i class="fas fa-tachometer-alt text-2xl"></i>
+        <span>Dashboard</span>
+      </button>
       <!-- Botón Identifícate / Salir -->
       <button
         *ngIf="!isLoggedIn"

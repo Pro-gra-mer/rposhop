@@ -102,6 +102,7 @@ public class AuthController {
 
         String token = jwtUtils.generateToken(user.getEmail(), user.getRole());
         response.put("token", token);
+        response.put("role", user.getRole());
         response.put("message", "Inicio de sesión exitoso");
         return ResponseEntity.ok(response);
     }

@@ -25,16 +25,13 @@
         formControlName="email"
         class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
       />
-      <div
-        *ngIf="submitted && loginForm.controls['email'].errors"
-        class="text-red-500 text-sm"
-      >
-        <span *ngIf="loginForm.controls['email'].errors['required']">
-          El correo es obligatorio.
-        </span>
-        <span *ngIf="loginForm.controls['email'].errors['email']">
-          Introduce un correo válido.
-        </span>
+      <div *ngIf="submitted && f['email'].errors" class="text-red-500 text-sm">
+        <span *ngIf="f['email'].errors['required']"
+          >El correo es obligatorio.</span
+        >
+        <span *ngIf="f['email'].errors['email']"
+          >Introduce un correo válido.</span
+        >
       </div>
     </div>
 
@@ -50,15 +47,12 @@
         class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
       />
       <div
-        *ngIf="submitted && loginForm.controls['password'].errors"
+        *ngIf="submitted && f['password'].errors"
         class="text-red-500 text-sm"
       >
-        <span *ngIf="loginForm.controls['password'].errors['required']">
-          La contraseña es obligatoria.
-        </span>
-        <span *ngIf="loginForm.controls['password'].errors['minlength']">
-          La contraseña debe tener al menos 8 caracteres.
-        </span>
+        <span *ngIf="f['password'].errors['required']"
+          >La contraseña es obligatoria.</span
+        >
       </div>
     </div>
 
@@ -72,6 +66,8 @@
         {{ isLoading ? "Cargando..." : "Iniciar Sesión" }}
       </button>
     </div>
+
+    <!-- Enlace para recuperar contraseña -->
     <div class="text-sm text-right mt-2">
       <a
         href="#"

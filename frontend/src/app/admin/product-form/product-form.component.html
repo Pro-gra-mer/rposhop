@@ -1,0 +1,86 @@
+<div
+  class="max-w-max w-full p-6 bg-white shadow-xl rounded-md border-2 border-accent"
+>
+  <h2 class="text-2xl font-bold text-primary mb-4 text-center">
+    Añadir Producto
+  </h2>
+
+  <!-- Formulario -->
+  <form>
+    <!-- Campo Categoría en el Formulario -->
+    <div class="mb-4">
+      <label for="categoria" class="block text-sm font-medium text-gray-700">
+        Categoría
+      </label>
+      <select
+        id="categoria"
+        name="categoria"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        [(ngModel)]="selectedCategory"
+      >
+        <option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Campo Nombre -->
+    <div class="mb-4">
+      <label for="nombre" class="block text-sm font-medium text-gray-700">
+        Nombre
+      </label>
+      <input
+        id="nombre"
+        name="nombre"
+        type="text"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        placeholder="Nombre del producto"
+      />
+    </div>
+
+    <!-- Campo URL de Imagen -->
+    <div class="mb-4">
+      <label for="imagenUrl" class="block text-sm font-medium text-gray-700">
+        URL de la Imagen
+      </label>
+      <input
+        id="imagenUrl"
+        name="imagenUrl"
+        type="text"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        placeholder="https://ejemplo.com/imagen.jpg"
+      />
+    </div>
+
+    <!-- Campo Precio -->
+    <div class="mb-4">
+      <label for="precio" class="block text-sm font-medium text-gray-700">
+        Precio
+      </label>
+      <input
+        id="precio"
+        name="precio"
+        type="number"
+        step="0.01"
+        class="block w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
+        placeholder="Precio del producto"
+      />
+    </div>
+
+    <!-- Botones -->
+    <div class="flex gap-36 justify-between">
+      <button
+        type="button"
+        class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-opacity-80"
+      >
+        Añadir
+      </button>
+    </div>
+  </form>
+</div>

@@ -21,10 +21,8 @@ export class LoginComponent {
   submitted = false;
   isLoading = false;
   message: string | null = null;
-  isSuccess = false; // Nueva propiedad para diferenciar éxito de error
-  @Output() closeMenu = new EventEmitter<void>();
+  isSuccess = false;
   @Output() loginSuccess = new EventEmitter<void>();
-  isRequestPasswordModalOpen = false;
   @Output() openRequestPassword = new EventEmitter<void>();
 
   constructor(
@@ -32,60 +30,62 @@ export class LoginComponent {
     private authService: AuthService,
     private router: Router
   ) {
+    // Configurar el formulario reactivo
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [Validators.required]], // Validación simple
     });
+  }
+
+  // Getter para facilitar el acceso a los controles del formulario
+  get f() {
+    return this.loginForm.controls;
   }
 
   // Manejo del envío del formulario
   onSubmit(): void {
     this.submitted = true;
-    this.message = null;
+    this.message = null; // Limpia mensajes anteriores
 
     if (this.loginForm.invalid) {
-      return;
+      return; // No continuar si el formulario es inválido
     }
 
     this.isLoading = true;
-    this.loginSuccess.emit(); // Notifica al HeaderComponent
 
+    // Llama al método `login` del servicio para hacer la solicitud HTTP
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
-        this.message = 'Inicio de sesión exitoso';
-        this.isSuccess = true; // Marcar como éxito
-        localStorage.setItem('authToken', response.token); // Guardar el token
+        // Maneja el estado del usuario después del login exitoso
+        this.authService.handleLogin(response); // Actualiza los estados isLoggedIn e isAdmin
+
+        this.isSuccess = true;
+        this.message = 'Inicio de sesión exitoso.';
         this.isLoading = false;
 
-        // Cerrar el modal
-        this.closeModal();
-        this.closeMenu.emit(); // Emitir evento para cerrar el menú
-        this.router.navigate(['/']); // Redirigir al home
+        // Redirige al home o donde sea necesario
+        this.loginSuccess.emit();
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.isLoading = false;
-        this.isSuccess = false; // Marcar como error
-        if (err.error && typeof err.error === 'object') {
-          this.message = err.error.message || 'Ocurrió un error.';
+        this.isSuccess = false;
+
+        // Manejo del mensaje de error basado en el código de estado
+        if (err.status === 401) {
+          this.message =
+            'Credenciales inválidas. Verifica tu correo y contraseña.';
+        } else if (err.status === 403) {
+          this.message = 'Cuenta no activada. Por favor, revisa tu correo.';
         } else {
-          this.message = 'Error inesperado. Por favor, inténtalo nuevamente.';
+          this.message = 'Ocurrió un error inesperado. Inténtalo más tarde.';
         }
       },
     });
   }
-  closeModal(): void {
-    const modalBackdrop = document.querySelector('.modal-backdrop');
-    if (modalBackdrop) {
-      modalBackdrop.classList.add('hidden'); // Esconde el modal
-    }
-  }
 
-  openRequestPasswordModal() {
-    this.isRequestPasswordModalOpen = true;
-    this.openRequestPassword.emit(); // Notifica al padre para abrir el modal
-  }
-
-  closeRequestPasswordModal() {
-    this.isRequestPasswordModalOpen = false;
+  // Método para abrir el modal de "Recuperar Contraseña"
+  openRequestPasswordModal(): void {
+    this.openRequestPassword.emit(); // Notifica al componente padre
   }
 }

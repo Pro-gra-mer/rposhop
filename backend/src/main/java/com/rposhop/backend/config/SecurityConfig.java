@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -29,13 +28,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configuración CORS
                 .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar
                 .authorizeHttpRequests(auth -> auth
-                        // Rutas públicas de Swagger (restringidas a localhost)
+                        // Rutas públicas de Swagger
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/v3/api-docs.yaml",
                                 "/swagger-ui.html"
-                        ).access(new WebExpressionAuthorizationManager("hasIpAddress('127.0.0.1')"))
+                        ).permitAll()
                         // Rutas públicas
                         .requestMatchers(
                                 "/api/auth/register",
@@ -45,6 +44,11 @@ public class SecurityConfig {
                                 "/api/auth/activate"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/cart/**").permitAll()
+                        // ✅ PERMITIR GET EN CATEGORÍAS (Público)
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
+                        // ✅ RESTRINGIR POST/DELETE PARA SOLO ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
                         // Rutas protegidas por rol
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasRole("USER")
@@ -66,7 +70,6 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setMaxAge(3600L); // Cachea las reglas CORS durante 1 hora
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

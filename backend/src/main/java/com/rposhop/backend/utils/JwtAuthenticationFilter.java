@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final SecretKey secretKey;
 
     public JwtAuthenticationFilter() {
-        // Carga la clave secreta directamente de las variables de entorno
+        // Cargar la clave secreta desde variables de entorno
         String encodedKey = System.getenv("JWT_SECRET_KEY");
         if (encodedKey == null || encodedKey.isEmpty()) {
             throw new IllegalStateException("JWT_SECRET_KEY no está configurada en las variables de entorno.");

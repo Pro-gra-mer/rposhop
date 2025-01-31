@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,6 +6,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RegisterComponent } from '../register/register.component';
 import { LoginComponent } from '../login/login.component';
 import { RequestPasswordComponent } from '../request-password/request-password.component';
+import { AuthService } from '../../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -20,42 +22,61 @@ import { RequestPasswordComponent } from '../request-password/request-password.c
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   menuOpen = false;
   isLoggedIn = false;
+  isAdmin = false;
   isRegisterModalOpen = false;
   isLoginModalOpen = false;
   isRequestPasswordModalOpen = false;
 
   resetPasswordToken: string | null = null;
 
-  constructor(public router: Router, private route: ActivatedRoute) {}
+  private subscriptions: Subscription = new Subscription();
 
-  ngOnInit() {
-    // Check login status
-    if (typeof window !== 'undefined' && localStorage.getItem('authToken')) {
-      this.isLoggedIn = true;
-    }
+  constructor(
+    public router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
 
-    // Subscribe to query params changes
-    this.route.queryParams.subscribe((params) => {
-      const token = params['token'];
-      if (token) {
-        this.resetPasswordToken = token;
-      }
-    });
+  ngOnInit(): void {
+    // Suscribirse a los estados de autenticación y rol
+    this.subscriptions.add(
+      this.authService.isLoggedIn$.subscribe((loggedIn) => {
+        this.isLoggedIn = loggedIn;
+      })
+    );
+
+    this.subscriptions.add(
+      this.authService.isAdmin$.subscribe((admin) => {
+        this.isAdmin = admin;
+      })
+    );
+
+    // Restaurar sesión al cargar el componente
+    this.authService.restoreSession();
   }
 
-  toggleMenu() {
+  ngOnDestroy(): void {
+    // Cancelar todas las suscripciones al destruir el componente
+    this.subscriptions.unsubscribe();
+  }
+
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
+
+  toggleMenu(): void {
     this.menuOpen = !this.menuOpen;
   }
 
-  openRegisterModal() {
+  openRegisterModal(): void {
     this.menuOpen = false;
     this.isRegisterModalOpen = true;
   }
 
-  closeRegisterModal() {
+  closeRegisterModal(): void {
     this.isRegisterModalOpen = false;
   }
 
@@ -72,23 +93,23 @@ export class HeaderComponent implements OnInit {
     this.menuOpen = false;
   }
 
-  logout() {
-    localStorage.removeItem('authToken');
-    this.isLoggedIn = false;
+  logout(): void {
+    // Delegar el logout al AuthService
+    this.authService.logout();
     this.router.navigate(['/']);
   }
 
-  openRequestPasswordModal() {
+  openRequestPasswordModal(): void {
     this.isLoginModalOpen = false;
     this.menuOpen = false;
     this.isRequestPasswordModalOpen = true;
   }
 
-  closeRequestPasswordModal() {
+  closeRequestPasswordModal(): void {
     this.isRequestPasswordModalOpen = false;
   }
 
-  openResetPasswordModal(token: string | null) {
+  openResetPasswordModal(token: string | null): void {
     if (!token) {
       console.error('No token provided for password reset');
       return;
@@ -103,7 +124,7 @@ export class HeaderComponent implements OnInit {
     this.isRequestPasswordModalOpen = false;
   }
 
-  closeResetPasswordModal() {
+  closeResetPasswordModal(): void {
     this.resetPasswordToken = null;
 
     // Elimina los parámetros de la URL para evitar abrir el modal nuevamente
