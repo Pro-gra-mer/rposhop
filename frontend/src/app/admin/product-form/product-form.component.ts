@@ -37,19 +37,23 @@ export class ProductFormComponent implements OnInit {
     private productService: ProductService,
     private authService: AuthService
   ) {
+    // Formulario para añadir producto con el campo description
     this.addProductForm = this.fb.group({
       categoryId: [null, Validators.required],
       name: ['', [Validators.required, Validators.minLength(3)]],
       imageUrl: ['', Validators.required],
       price: [null, [Validators.required, Validators.min(0)]],
+      description: [''], // nuevo campo para la descripción
     });
 
+    // Formulario para editar producto, también se añade description
     this.editProductForm = this.fb.group({
       categorySelect: [null, Validators.required],
       productSelect: [null, Validators.required],
       editName: ['', [Validators.required, Validators.minLength(3)]],
       editImageUrl: ['', Validators.required],
       editPrice: [null, [Validators.required, Validators.min(0)]],
+      editDescription: [''], // nuevo campo para la descripción en edición
     });
   }
 
@@ -111,10 +115,11 @@ export class ProductFormComponent implements OnInit {
     if (product) {
       this.selectedProductId = product.id;
       this.editProductForm.patchValue({
-        categorySelect: product.categoryId, // Se asigna la categoría del producto
+        categorySelect: product.categoryId, // asignar la categoría actual
         editName: product.name,
         editImageUrl: product.imageUrl,
         editPrice: product.price,
+        editDescription: product.description || '',
       });
     }
   }
@@ -131,6 +136,7 @@ export class ProductFormComponent implements OnInit {
       imageUrl: this.editProductForm.value.editImageUrl,
       price: this.editProductForm.value.editPrice,
       categoryId: this.editProductForm.value.categorySelect,
+      description: this.editProductForm.value.editDescription, // envía la descripción actualizada
     };
     this.productService
       .updateProduct(this.selectedProductId, updated)

@@ -5,8 +5,10 @@ public class ProductRequest {
     private String imageUrl;
     private Double price;
     private Long categoryId;
+    private String description; // Nueva propiedad
 
     // Getters y Setters
+
     public String getName() {
         return name;
     }
@@ -37,5 +39,13 @@ public class ProductRequest {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

@@ -5,6 +5,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { authGuard } from './guards/auth-guard/auth-guard.component';
+import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent }, // Página principal
@@ -17,6 +18,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard], // Protección para asegurarse de que solo admins accedan
   },
+  { path: 'product/:id', component: ProductDetailComponent }, // Detalle del producto
 
   { path: '**', redirectTo: '/' }, // Ruta por defecto para manejar URLs no válidas
 ];

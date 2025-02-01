@@ -40,7 +40,8 @@ public class ProductService {
         product.setName(request.getName());
         product.setImageUrl(request.getImageUrl());
         product.setPrice(request.getPrice());
-        product.setCategoryId(category.getId()); // Usa setCategoryId
+        product.setCategoryId(category.getId());
+        product.setDescription(request.getDescription()); // Asigna la descripción
 
         return productRepository.save(product);
     }
@@ -59,7 +60,8 @@ public class ProductService {
         product.setName(request.getName());
         product.setImageUrl(request.getImageUrl());
         product.setPrice(request.getPrice());
-        product.setCategoryId(category.getId()); // Usa setCategoryId
+        product.setCategoryId(category.getId());
+        product.setDescription(request.getDescription()); // Actualiza la descripción
 
         return productRepository.save(product);
     }
@@ -71,4 +73,11 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    // Dentro de ProductService.java
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+    }
+
 }

@@ -4,4 +4,5 @@ export interface Product {
   imageUrl: string;
   price: number;
   categoryId: number;
+  description?: string; // propiedad opcional para la descripción
 }

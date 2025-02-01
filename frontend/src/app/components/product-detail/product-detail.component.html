@@ -1,0 +1,32 @@
+<div *ngIf="loading" class="text-center py-10">Cargando...</div>
+
+<div *ngIf="error" class="text-center text-red-500 py-10">
+  {{ error }}
+</div>
+
+<div *ngIf="product" class="mx-auto p-10 bg-white">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Imagen del producto -->
+    <div class="flex items-center justify-center">
+      <img
+        [src]="product.imageUrl"
+        alt="{{ product.name }}"
+        class="w-full h-[600px] object-contain rounded-md"
+      />
+    </div>
+    <!-- Detalle del producto -->
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ product.name }}</h1>
+      <p class="text-2xl text-gray-700 mb-4">${{ product.price }}</p>
+      <p class="text-gray-600 mb-6 mr-16">
+        {{ product.description || "Descripción del producto." }}
+      </p>
+      <button
+        (click)="addToCart(product)"
+        class="px-6 py-3 bg-accent text-primary font-semibold rounded hover:bg-opacity-80 transition-colors duration-200"
+      >
+        Añadir al carrito
+      </button>
+    </div>
+  </div>
+</div>

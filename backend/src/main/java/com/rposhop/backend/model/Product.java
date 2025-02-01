@@ -22,6 +22,9 @@ public class Product {
     @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
+    @Column(length = 1000) // Puedes ajustar la longitud y hacerlo nullable si lo deseas
+    private String description;
+
     // Getters y Setters
 
     public Long getId() {
@@ -62,5 +65,13 @@ public class Product {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

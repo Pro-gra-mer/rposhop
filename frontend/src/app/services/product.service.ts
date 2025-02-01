@@ -79,4 +79,13 @@ export class ProductService {
         })
       );
   }
+
+  getProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/${id}`).pipe(
+      catchError((error) => {
+        console.error('Error al cargar el producto', error);
+        return throwError(() => new Error('No se pudo cargar el producto.'));
+      })
+    );
+  }
 }

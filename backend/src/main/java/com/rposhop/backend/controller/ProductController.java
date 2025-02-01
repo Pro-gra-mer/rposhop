@@ -87,4 +87,20 @@ public class ProductController {
         return productService.getProductsByCategory(categoryId);
     }
 
+    @Operation(summary = "Obtiene un producto por su ID", description = "Devuelve el producto correspondiente al ID proporcionado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Producto obtenido con éxito",
+                    content = @Content(schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+        try {
+            Product product = productService.getProductById(id);
+            return ResponseEntity.ok(product);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
