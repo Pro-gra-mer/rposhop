@@ -10,7 +10,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -26,6 +25,8 @@ export class CategoryFormComponent implements OnInit {
   categories: Category[] = [];
   selectedCategoryId: number | null = null;
   isAdmin = false;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +57,8 @@ export class CategoryFormComponent implements OnInit {
 
   addCategory() {
     if (!this.isAdmin) {
-      console.error('⚠️ No tienes permisos para añadir categorías.');
+      this.errorMessage = '⚠️ No tienes permisos para añadir categorías.';
+      this.clearMessages();
       return;
     }
 
@@ -64,10 +66,18 @@ export class CategoryFormComponent implements OnInit {
 
     this.categoryService.addCategory(this.categoryForm.value).subscribe({
       next: () => {
+        this.successMessage = 'Categoría añadida correctamente.';
+        this.clearMessages();
+        this.errorMessage = null;
         this.categoryService.loadCategories();
         this.categoryForm.reset();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.errorMessage = 'Error al añadir la categoría.';
+        this.clearMessages();
+        this.successMessage = null;
+        console.error(err);
+      },
     });
   }
 
@@ -81,6 +91,12 @@ export class CategoryFormComponent implements OnInit {
   }
 
   updateCategory() {
+    if (!this.isAdmin) {
+      this.errorMessage = '⚠️ No tienes permisos para editar categorías.';
+      this.clearMessages();
+      return;
+    }
+
     if (this.editCategoryForm.invalid || !this.selectedCategoryId) return;
 
     this.categoryService
@@ -89,27 +105,56 @@ export class CategoryFormComponent implements OnInit {
       })
       .subscribe({
         next: () => {
+          this.successMessage = 'Categoría actualizada correctamente.';
+          this.clearMessages();
+          this.errorMessage = null;
           this.categoryService.loadCategories();
           this.cancelEdit();
         },
-        error: (err) => console.error(err),
+        error: (err) => {
+          this.errorMessage = 'Error al actualizar la categoría.';
+          this.clearMessages();
+          this.successMessage = null;
+          console.error(err);
+        },
       });
   }
 
   deleteCategory() {
+    if (!this.isAdmin) {
+      this.errorMessage = '⚠️ No tienes permisos para eliminar categorías.';
+      this.clearMessages();
+      return;
+    }
+
     if (!this.selectedCategoryId) return;
 
     this.categoryService.deleteCategory(this.selectedCategoryId).subscribe({
       next: () => {
+        this.successMessage = 'Categoría eliminada correctamente.';
+        this.clearMessages();
+        this.errorMessage = null;
         this.categoryService.loadCategories();
         this.cancelEdit();
       },
-      error: (err) => console.error(err),
+      error: (err) => {
+        this.errorMessage = 'Error al eliminar la categoría.';
+        this.clearMessages();
+        this.successMessage = null;
+        console.error(err);
+      },
     });
   }
 
   cancelEdit() {
     this.editCategoryForm.reset();
     this.selectedCategoryId = null;
+  }
+
+  private clearMessages() {
+    setTimeout(() => {
+      this.successMessage = null;
+      this.errorMessage = null;
+    }, 3000); // Limpia los mensajes después de 5 segundos
   }
 }

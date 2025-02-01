@@ -1,26 +1,185 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { CategoryService } from '../../services/category.service';
+import { ProductService } from '../../services/product.service';
+import { AuthService } from '../../services/auth.service';
+import { Category } from '../../models/Category';
+import { Product } from '../../models/Product';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './product-form.component.html',
-  styleUrl: './product-form.component.css',
+  styleUrls: ['./product-form.component.css'],
 })
-export class ProductFormComponent {
-  categories: any[] = [];
-  selectedCategory: string = '';
+export class ProductFormComponent implements OnInit {
+  addProductForm: FormGroup;
+  editProductForm: FormGroup;
+  categories: Category[] = [];
+  products: Product[] = [];
+  filteredProducts: Product[] = [];
+  selectedProductId: number | null = null;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+  isAdmin = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private fb: FormBuilder,
+    private categoryService: CategoryService,
+    private productService: ProductService,
+    private authService: AuthService
+  ) {
+    this.addProductForm = this.fb.group({
+      categoryId: [null, Validators.required],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      imageUrl: ['', Validators.required],
+      price: [null, [Validators.required, Validators.min(0)]],
+    });
+
+    this.editProductForm = this.fb.group({
+      categorySelect: [null, Validators.required],
+      productSelect: [null, Validators.required],
+      editName: ['', [Validators.required, Validators.minLength(3)]],
+      editImageUrl: ['', Validators.required],
+      editPrice: [null, [Validators.required, Validators.min(0)]],
+    });
+  }
 
   ngOnInit(): void {
-    this.http
-      .get('http://localhost:8080/api/categories')
-      .subscribe((data: any) => {
-        this.categories = data;
+    // Suscríbete a isAdmin$
+    this.authService.isAdmin$.subscribe((isAdmin) => {
+      this.isAdmin = isAdmin;
+    });
+
+    this.categoryService.categories$.subscribe(
+      (cats) => (this.categories = cats)
+    );
+    this.categoryService.loadCategories();
+
+    this.productService.products$.subscribe((prods) => {
+      this.products = prods;
+      this.filteredProducts = prods;
+    });
+    this.productService.loadProducts();
+  }
+
+  addProduct(): void {
+    if (!this.isAdmin) {
+      this.errorMessage = '⚠️ No tienes permisos para añadir productos.';
+      this.clearMessages();
+      return;
+    }
+    if (this.addProductForm.invalid) {
+      this.errorMessage = 'Por favor, completa todos los campos correctamente.';
+      this.clearMessages();
+      return;
+    }
+    this.productService.addProduct(this.addProductForm.value).subscribe({
+      next: () => {
+        this.successMessage = 'Producto añadido correctamente.';
+        this.addProductForm.reset();
+        this.productService.loadProducts();
+        this.clearMessages();
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al añadir el producto.';
+        this.clearMessages();
+        console.error(err);
+      },
+    });
+  }
+
+  onCategorySelect(): void {
+    const categoryId = Number(this.editProductForm.value.categorySelect);
+    this.filteredProducts = categoryId
+      ? this.products.filter((p) => p.categoryId === categoryId)
+      : this.products;
+    this.editProductForm.patchValue({ productSelect: null });
+  }
+
+  onProductSelect(event: Event): void {
+    const prodId = Number((event.target as HTMLSelectElement).value);
+    const product = this.products.find((p) => p.id === prodId);
+    if (product) {
+      this.selectedProductId = product.id;
+      this.editProductForm.patchValue({
+        categorySelect: product.categoryId, // Se asigna la categoría del producto
+        editName: product.name,
+        editImageUrl: product.imageUrl,
+        editPrice: product.price,
       });
+    }
+  }
+
+  updateProduct(): void {
+    if (!this.isAdmin) {
+      this.errorMessage = '⚠️ No tienes permisos para editar productos.';
+      this.clearMessages();
+      return;
+    }
+    if (this.editProductForm.invalid || !this.selectedProductId) return;
+    const updated = {
+      name: this.editProductForm.value.editName,
+      imageUrl: this.editProductForm.value.editImageUrl,
+      price: this.editProductForm.value.editPrice,
+      categoryId: this.editProductForm.value.categorySelect,
+    };
+    this.productService
+      .updateProduct(this.selectedProductId, updated)
+      .subscribe({
+        next: () => {
+          this.successMessage = 'Producto actualizado correctamente.';
+          this.productService.loadProducts();
+          this.cancelEdit();
+          this.clearMessages();
+        },
+        error: (err) => {
+          this.errorMessage = 'Error al actualizar el producto.';
+          this.clearMessages();
+          console.error(err);
+        },
+      });
+  }
+
+  deleteProduct(): void {
+    if (!this.isAdmin) {
+      this.errorMessage = '⚠️ No tienes permisos para eliminar productos.';
+      this.clearMessages();
+      return;
+    }
+    if (!this.selectedProductId) return;
+    this.productService.deleteProduct(this.selectedProductId).subscribe({
+      next: () => {
+        this.successMessage = 'Producto eliminado correctamente.';
+        this.productService.loadProducts();
+        this.cancelEdit();
+        this.clearMessages();
+      },
+      error: (err) => {
+        this.errorMessage = 'Error al eliminar el producto.';
+        this.clearMessages();
+        console.error(err);
+      },
+    });
+  }
+
+  cancelEdit(): void {
+    this.editProductForm.reset();
+    this.selectedProductId = null;
+  }
+
+  private clearMessages(): void {
+    setTimeout(() => {
+      this.successMessage = null;
+      this.errorMessage = null;
+    }, 3000);
   }
 }
