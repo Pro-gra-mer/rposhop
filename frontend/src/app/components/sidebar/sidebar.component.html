@@ -1,10 +1,15 @@
+<!-- sidebar.component.html -->
 <aside class="bg-bgLight border-r-2 border-accent w-64 h-full p-4">
   <h2 class="text-textDark text-lg font-bold mb-4">Categorías</h2>
   <ul class="space-y-2">
-    <!-- Mostrar categorías dinámicamente -->
     <li *ngFor="let category of categories">
       <button
-        class="w-full text-left text-textDark py-2 px-4 hover:bg-primary hover:text-white rounded"
+        class="w-full text-left py-2 px-4 rounded transition-colors duration-200"
+        [ngClass]="{
+          'bg-gray-400 text-black': category.id === selectedCategoryId,
+          'text-textDark hover:bg-primary hover:text-white':
+            category.id !== selectedCategoryId
+        }"
         (click)="selectCategory(category)"
       >
         {{ category.name }}

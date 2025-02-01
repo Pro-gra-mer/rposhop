@@ -64,4 +64,19 @@ export class ProductService {
         })
       );
   }
+
+  // product.service.ts
+  getProductsByCategory(categoryId: number): Observable<Product[]> {
+    return this.http
+      .get<Product[]>(`${this.apiUrl}/category/${categoryId}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al cargar productos por categoría', error);
+          return throwError(
+            () =>
+              new Error('No se pudieron cargar los productos por categoría.')
+          );
+        })
+      );
+  }
 }

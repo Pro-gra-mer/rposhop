@@ -81,4 +81,10 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.ok(Map.of("message", "Producto eliminado correctamente"));
     }
+
+    @GetMapping("/category/{categoryId}")
+    public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
+        return productService.getProductsByCategory(categoryId);
+    }
+
 }
