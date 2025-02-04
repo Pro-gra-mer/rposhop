@@ -92,6 +92,13 @@ export class CartComponent implements OnInit {
   }
 
   proceedToCheckout(): void {
-    alert('Proceder al pago');
+    if (!this.isAuthenticated) {
+      this.errorMessage = 'Por favor, inicia sesión para proceder al pago';
+      setTimeout(() => {
+        this.errorMessage = '';
+      }, 4000);
+
+      return;
+    }
   }
 }

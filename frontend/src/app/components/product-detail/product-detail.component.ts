@@ -18,6 +18,7 @@ export class ProductDetailComponent implements OnInit {
   product: Product | null = null;
   loading = true;
   error: string | null = null;
+  message: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,7 +75,12 @@ export class ProductDetailComponent implements OnInit {
         product.price,
         product.imageUrl
       );
-      console.log('Producto añadido al carrito anónimo');
+      this.message = 'Por favor, inicia sesión para proceder al pago';
+      setTimeout(() => {
+        this.message = '';
+      }, 4000);
+      this.message = 'Producto añadido al carrito';
+      return;
     }
   }
 }
