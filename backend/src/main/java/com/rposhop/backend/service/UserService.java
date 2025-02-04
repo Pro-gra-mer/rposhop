@@ -4,6 +4,8 @@ import com.rposhop.backend.dto.RegisterRequest;
 import com.rposhop.backend.model.User;
 import com.rposhop.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -123,6 +125,15 @@ public class UserService {
 
     public boolean emailExists(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new IllegalStateException("No hay usuario autenticado");
+        }
+        String email = authentication.getName(); // Se asume que el email se usa como username
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con email: " + email));
     }
 
 

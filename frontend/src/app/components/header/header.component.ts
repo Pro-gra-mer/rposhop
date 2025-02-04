@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RegisterComponent } from '../register/register.component';
 import { LoginComponent } from '../login/login.component';
 import { RequestPasswordComponent } from '../request-password/request-password.component';
 import { AuthService } from '../../services/auth.service';
+import { LocalCartService } from '../../services/local-cart.service';
 import { Subscription } from 'rxjs';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ import { Subscription } from 'rxjs';
     RegisterComponent,
     LoginComponent,
     RequestPasswordComponent,
+    RouterLink,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
@@ -29,37 +31,51 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isRegisterModalOpen = false;
   isLoginModalOpen = false;
   isRequestPasswordModalOpen = false;
-
+  cartCount = 0;
   resetPasswordToken: string | null = null;
-
   private subscriptions: Subscription = new Subscription();
 
   constructor(
     public router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private localCartService: LocalCartService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
-    // Suscribirse a los estados de autenticación y rol
+    // Suscribirse al estado de autenticación
     this.subscriptions.add(
       this.authService.isLoggedIn$.subscribe((loggedIn) => {
         this.isLoggedIn = loggedIn;
+        // Si está autenticado, suscribirse al carrito del backend
+        if (this.isLoggedIn) {
+          this.cartService.refreshCart().subscribe();
+          this.subscriptions.add(
+            this.cartService.cart$.subscribe((cart) => {
+              if (cart) {
+                this.cartCount = cart.items.reduce(
+                  (sum, item) => sum + item.quantity,
+                  0
+                );
+              }
+            })
+          );
+        } else {
+          // Si es anónimo, suscribirse al carrito local
+          this.subscriptions.add(
+            this.localCartService.cartCount$.subscribe((count) => {
+              this.cartCount = count;
+            })
+          );
+        }
       })
     );
 
-    this.subscriptions.add(
-      this.authService.isAdmin$.subscribe((admin) => {
-        this.isAdmin = admin;
-      })
-    );
-
-    // Restaurar sesión al cargar el componente
     this.authService.restoreSession();
   }
 
   ngOnDestroy(): void {
-    // Cancelar todas las suscripciones al destruir el componente
     this.subscriptions.unsubscribe();
   }
 
@@ -94,7 +110,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    // Delegar el logout al AuthService
     this.authService.logout();
     this.router.navigate(['/']);
   }
@@ -114,11 +129,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       console.error('No token provided for password reset');
       return;
     }
-
     console.log('Opening reset password modal with token:', token);
     this.resetPasswordToken = token;
-
-    // Close other modals if they're open
     this.isLoginModalOpen = false;
     this.isRegisterModalOpen = false;
     this.isRequestPasswordModalOpen = false;
@@ -126,8 +138,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   closeResetPasswordModal(): void {
     this.resetPasswordToken = null;
-
-    // Elimina los parámetros de la URL para evitar abrir el modal nuevamente
     this.router.navigate([], {
       queryParams: { token: null },
       queryParamsHandling: 'merge',

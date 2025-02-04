@@ -8,6 +8,8 @@ import {
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../../services/cart.service';
+import { CartMergeRequest } from '../../models/CartMergeRequest ';
 
 @Component({
   selector: 'app-login',
@@ -28,12 +30,13 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cartService: CartService // Inyecta CartService
   ) {
     // Configurar el formulario reactivo
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]], // Validación simple
+      password: ['', [Validators.required]],
     });
   }
 
@@ -42,7 +45,6 @@ export class LoginComponent {
     return this.loginForm.controls;
   }
 
-  // Manejo del envío del formulario
   onSubmit(): void {
     this.submitted = true;
     this.message = null; // Limpia mensajes anteriores
@@ -53,28 +55,43 @@ export class LoginComponent {
 
     this.isLoading = true;
 
-    // Llama al método `login` del servicio para hacer la solicitud HTTP
+    // Llama al método login del AuthService
     this.authService.login(this.loginForm.value).subscribe({
       next: (response: any) => {
-        // Maneja el estado del usuario después del login exitoso
-        this.authService.handleLogin(response); // Actualiza los estados isLoggedIn e isAdmin
+        // Maneja el login exitoso: guarda token, actualiza estados, etc.
+        this.authService.handleLogin(response);
+
+        // Fusiona el carrito anónimo (almacenado en localStorage) con el carrito persistente
+        const anonCartJson = localStorage.getItem('anonymousCart');
+        if (anonCartJson) {
+          const mergeRequest: CartMergeRequest = JSON.parse(anonCartJson);
+          this.cartService.mergeCart(mergeRequest).subscribe({
+            next: (mergedCart) => {
+              console.log('Carrito fusionado:', mergedCart);
+              // Limpia el carrito anónimo del localStorage
+              localStorage.removeItem('anonymousCart');
+            },
+            error: (error) => {
+              console.error('Error al fusionar el carrito:', error);
+            },
+          });
+        }
 
         this.isSuccess = true;
         this.message = 'Inicio de sesión exitoso.';
         this.isLoading = false;
 
-        // Redirige al home o donde sea necesario
         this.loginSuccess.emit();
+        // Redirige a la página principal
         this.router.navigate(['/']);
       },
       error: (err) => {
         this.isLoading = false;
         this.isSuccess = false;
 
-        // Manejo del mensaje de error basado en el código de estado
         if (err.status === 401) {
           this.message =
-            'Credenciales inválidas. Verifica tu correo y contraseña.';
+            'Credenciales incorrectas. Verifica tu correo y contraseña.';
         } else if (err.status === 403) {
           this.message = 'Cuenta no activada. Por favor, revisa tu correo.';
         } else {
@@ -84,8 +101,7 @@ export class LoginComponent {
     });
   }
 
-  // Método para abrir el modal de "Recuperar Contraseña"
   openRequestPasswordModal(): void {
-    this.openRequestPassword.emit(); // Notifica al componente padre
+    this.openRequestPassword.emit();
   }
 }

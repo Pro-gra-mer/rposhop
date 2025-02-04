@@ -5,7 +5,7 @@
     <!-- Logo -->
     <div class="flex items-center space-x-2">
       <img src="favicon.ico" alt="Logo" class="h-16 w-16" />
-      <a href="/" class="font-bold text-primary text-3xl">
+      <a [routerLink]="['/']" class="font-bold text-primary text-3xl">
         <span class="rpo">RPO</span>Shop
       </a>
     </div>
@@ -101,11 +101,14 @@
       </div>
 
       <!-- Botón Carrito -->
-      <button class="relative text-pretty hover:text-accent">
+      <button
+        [routerLink]="['/cart']"
+        class="relative text-pretty hover:text-accent"
+      >
         <i class="fas fa-shopping-cart text-2xl"></i>
         <span
           class="absolute top-0 right-0 bg-accent text-white text-xs rounded-full px-1"
-          >2</span
+          >{{ cartCount }}</span
         >
       </button>
     </div>

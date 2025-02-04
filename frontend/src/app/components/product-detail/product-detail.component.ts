@@ -3,6 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../models/Product';
 import { ProductService } from '../../services/product.service';
+import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
+import { LocalCartService } from '../../services/local-cart.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -18,11 +21,13 @@ export class ProductDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private productService: ProductService
+    private productService: ProductService,
+    private authService: AuthService,
+    private localCartService: LocalCartService,
+    private cartService: CartService
   ) {}
 
   ngOnInit(): void {
-    // Obtener el id del producto de la URL
     const productId = this.route.snapshot.paramMap.get('id');
     if (productId) {
       const id = Number(productId);
@@ -44,8 +49,32 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart(product: Product): void {
-    // Implementa la lógica para añadir el producto al carrito.
-    console.log('Producto añadido al carrito:', product);
-    // Ejemplo: this.cartService.addProduct(product);
+    const token =
+      typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+    if (token) {
+      // Usuario autenticado: utiliza el backend para el carrito persistente
+      this.cartService.addToCart(product.id, 1).subscribe({
+        next: (cart) => {
+          console.log('Producto añadido al carrito persistente:', cart);
+        },
+        error: (err) => {
+          console.error(
+            'Error al añadir producto al carrito persistente:',
+            err
+          );
+          this.error = 'No se pudo añadir el producto al carrito.';
+        },
+      });
+    } else {
+      // Usuario anónimo: guarda en localStorage con datos completos del producto
+      this.localCartService.addItem(
+        product.id,
+        1,
+        product.name,
+        product.price,
+        product.imageUrl
+      );
+      console.log('Producto añadido al carrito anónimo');
+    }
   }
 }

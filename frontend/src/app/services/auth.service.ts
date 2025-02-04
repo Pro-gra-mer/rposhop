@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
+import { CartService } from './cart.service';
+import { Cart } from '../models/Cart';
 
 @Injectable({
   providedIn: 'root',
@@ -15,16 +17,18 @@ export class AuthService {
   private isAdminSubject = new BehaviorSubject<boolean>(false);
   isAdmin$ = this.isAdminSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cartService: CartService) {
     this.restoreSession();
   }
 
   // Registro
-  register(registerData: { name: string; email: string; password: string }) {
+  register(registerData: {
+    name: string;
+    email: string;
+    password: string;
+  }): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, registerData, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-      }),
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     });
   }
 
@@ -34,29 +38,56 @@ export class AuthService {
       catchError((error) => {
         console.error('Error en el login:', error);
         let errorMessage = 'Ocurrió un error en el login.';
-
-        // Manejo de errores basado en el código de estado
         if (error.status === 401) {
           errorMessage =
             'Credenciales incorrectas. Verifica tu correo y contraseña.';
         } else if (error.status === 403) {
           errorMessage = 'Cuenta no activada. Por favor, revisa tu correo.';
         }
-
         return throwError(() => new Error(errorMessage));
       })
     );
   }
 
-  // Manejo del login exitoso
-  handleLogin(response: { token: string; role: string }): void {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('role', response.role);
+  // Decodifica el token JWT para obtener el usuario (email)
+  getCurrentUser(): { email: string } {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No hay token disponible');
     }
+    try {
+      const payload = token.split('.')[1];
+      const decodedPayload = JSON.parse(window.atob(payload));
+      // Se asume que el email está en el campo 'sub'
+      return { email: decodedPayload.sub };
+    } catch (e) {
+      throw new Error('Error al decodificar el token');
+    }
+  }
 
+  // Manejo del login exitoso y fusión del carrito anónimo
+  handleLogin(response: { token: string; role: string }): void {
+    localStorage.setItem('authToken', response.token);
+    localStorage.setItem('role', response.role);
     this.isLoggedInSubject.next(true);
     this.isAdminSubject.next(response.role === 'ADMIN');
+
+    const anonCartJson = localStorage.getItem('anonymousCart');
+    console.log('anonymousCart antes de la fusión:', anonCartJson);
+    if (anonCartJson) {
+      const mergeRequest = JSON.parse(anonCartJson);
+      this.cartService.mergeCart(mergeRequest).subscribe({
+        next: (mergedCart: Cart) => {
+          console.log('Carrito fusionado:', mergedCart);
+          // Se comenta la eliminación para mantener el carrito anónimo
+          // localStorage.removeItem('anonymousCart');
+          console.log('Carrito anónimo mantenido tras la fusión.');
+        },
+        error: (error: any) => {
+          console.error('Error al fusionar el carrito:', error);
+        },
+      });
+    }
   }
 
   // Obtener el rol
@@ -68,22 +99,23 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('authToken');
     localStorage.removeItem('role');
+    // No se elimina anonymousCart
     this.isLoggedInSubject.next(false);
     this.isAdminSubject.next(false);
+    console.log(
+      'Logout realizado. anonymousCart:',
+      localStorage.getItem('anonymousCart')
+    );
   }
 
   // Restaurar sesión
   restoreSession(): void {
-    // Verificar si estamos en un entorno de navegador
     if (typeof window !== 'undefined' && window.localStorage) {
       const token = localStorage.getItem('authToken');
       const role = localStorage.getItem('role');
-
-      // Actualizar los estados de autenticación y rol
       this.isLoggedInSubject.next(!!token);
       this.isAdminSubject.next(role === 'ADMIN');
     } else {
-      // Si no estamos en un entorno de navegador, aseguramos que los estados sean falsos
       this.isLoggedInSubject.next(false);
       this.isAdminSubject.next(false);
     }
