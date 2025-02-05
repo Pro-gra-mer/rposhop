@@ -6,6 +6,7 @@ import com.rposhop.backend.model.Product;
 import com.rposhop.backend.repository.CategoryRepository;
 import com.rposhop.backend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -79,5 +80,30 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
     }
+
+    public List<Product> searchProducts(String query) {
+        String[] words = query.trim().split("\\s+");
+        Specification<Product> spec = null;
+
+        for (String word : words) {
+            String singular;
+            if (word.toLowerCase().endsWith("s") && word.length() > 1) {
+                singular = word.substring(0, word.length() - 1);
+            } else {
+                singular = word;
+            }
+            Specification<Product> tempSpec = (root, cq, cb) -> {
+                String patternOriginal = "%" + word.toLowerCase() + "%";
+                String patternSingular = "%" + singular.toLowerCase() + "%";
+                return cb.or(
+                        cb.like(cb.lower(root.get("name")), patternOriginal),
+                        cb.like(cb.lower(root.get("name")), patternSingular)
+                );
+            };
+            spec = (spec == null) ? tempSpec : spec.and(tempSpec);
+        }
+        return productRepository.findAll(spec);
+    }
+
 
 }

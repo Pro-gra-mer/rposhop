@@ -1,0 +1,26 @@
+<!-- Mensaje de resultados solo si se realizó una búsqueda -->
+<div
+  *ngIf="hasSearched && products.length > 0"
+  class="text-left text-gray-700 py-4"
+>
+  {{ resultMessage }}
+</div>
+
+<!-- Mostrar productos si hay resultados -->
+<div
+  *ngIf="products.length > 0"
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
+>
+  <app-product-card
+    *ngFor="let product of products"
+    [product]="product"
+  ></app-product-card>
+</div>
+
+<!-- Mostrar mensaje si no hay productos tras la búsqueda -->
+<div
+  *ngIf="hasSearched && products.length === 0"
+  class="text-left text-gray-500 py-4"
+>
+  {{ resultMessage }}
+</div>

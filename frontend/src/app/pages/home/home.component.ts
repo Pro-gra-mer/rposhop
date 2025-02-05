@@ -6,11 +6,17 @@ import { CategoryService } from '../../services/category.service';
 import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { ProductListComponent } from '../../components/product-list/product-list.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [SidebarComponent, CommonModule, ProductCardComponent],
+  imports: [
+    SidebarComponent,
+    CommonModule,
+    ProductCardComponent,
+    ProductListComponent,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

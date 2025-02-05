@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { LocalCartService } from '../../services/local-cart.service';
 import { Subscription } from 'rxjs';
 import { CartService } from '../../services/cart.service';
+import { SearchBarComponent } from '../search-bar/search-bar.component';
 
 @Component({
   selector: 'app-header',
@@ -20,6 +21,7 @@ import { CartService } from '../../services/cart.service';
     LoginComponent,
     RequestPasswordComponent,
     RouterLink,
+    SearchBarComponent,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],

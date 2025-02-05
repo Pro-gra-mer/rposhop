@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 import { CartService } from './cart.service';
 import { Cart } from '../models/Cart';
+import { LocalCartService } from './local-cart.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,11 @@ export class AuthService {
   private isAdminSubject = new BehaviorSubject<boolean>(false);
   isAdmin$ = this.isAdminSubject.asObservable();
 
-  constructor(private http: HttpClient, private cartService: CartService) {
+  constructor(
+    private http: HttpClient,
+    private cartService: CartService,
+    private localCartService: LocalCartService
+  ) {
     this.restoreSession();
   }
 
@@ -106,6 +111,8 @@ export class AuthService {
       'Logout realizado. anonymousCart:',
       localStorage.getItem('anonymousCart')
     );
+
+    this.localCartService.setCartCount(0);
   }
 
   // Restaurar sesión

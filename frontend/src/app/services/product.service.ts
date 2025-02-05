@@ -8,6 +8,8 @@ export class ProductService {
   private apiUrl = 'http://localhost:8080/api/products';
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$ = this.productsSubject.asObservable();
+  private searchResultsSubject = new BehaviorSubject<Product[]>([]);
+  searchResults$ = this.searchResultsSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -87,5 +89,22 @@ export class ProductService {
         return throwError(() => new Error('No se pudo cargar el producto.'));
       })
     );
+  }
+
+  setSearchResults(results: Product[]): void {
+    this.searchResultsSubject.next(results);
+  }
+
+  searchProducts(query: string): Observable<Product[]> {
+    return this.http
+      .get<Product[]>(`${this.apiUrl}/search?query=${query}`)
+      .pipe(
+        catchError((error) => {
+          console.error('Error al buscar productos', error);
+          return throwError(
+            () => new Error('No se pudo realizar la búsqueda.')
+          );
+        })
+      );
   }
 }

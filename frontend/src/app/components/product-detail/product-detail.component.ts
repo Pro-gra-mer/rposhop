@@ -57,6 +57,10 @@ export class ProductDetailComponent implements OnInit {
       this.cartService.addToCart(product.id, 1).subscribe({
         next: (cart) => {
           console.log('Producto añadido al carrito persistente:', cart);
+          this.message = 'Producto añadido al carrito';
+          setTimeout(() => {
+            this.message = '';
+          }, 4000);
         },
         error: (err) => {
           console.error(
@@ -75,12 +79,11 @@ export class ProductDetailComponent implements OnInit {
         product.price,
         product.imageUrl
       );
-      this.message = 'Por favor, inicia sesión para proceder al pago';
+      this.message =
+        'Producto añadido al carrito. Por favor, inicia sesión para proceder al pago';
       setTimeout(() => {
         this.message = '';
       }, 4000);
-      this.message = 'Producto añadido al carrito';
-      return;
     }
   }
 }

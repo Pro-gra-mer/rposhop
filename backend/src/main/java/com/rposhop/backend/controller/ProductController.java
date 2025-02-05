@@ -103,4 +103,11 @@ public class ProductController {
         }
     }
 
+    @Operation(summary = "Búsqueda de productos", description = "Devuelve productos cuyo nombre contenga la consulta")
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String query) {
+        return ResponseEntity.ok(productService.searchProducts(query));
+    }
+
+
 }
