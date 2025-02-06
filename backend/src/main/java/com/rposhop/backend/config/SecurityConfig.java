@@ -68,7 +68,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "https://rposhop-production.up.railway.app", // Backend
-                "https://tu-frontend.netlify.app" // URL del frontend en Netlify
+                "https://rposhop.netlify.app/" // URL del frontend en Netlify
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json"));
