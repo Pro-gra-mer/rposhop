@@ -66,7 +66,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Cambia esto según el origen del frontend
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://rposhop-production.up.railway.app", // Backend
+                "https://tu-frontend.netlify.app" // URL del frontend en Netlify
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
@@ -76,6 +79,7 @@ public class SecurityConfig {
 
         return source;
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
