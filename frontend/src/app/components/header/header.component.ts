@@ -46,11 +46,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // Suscribirse al estado de autenticación
     this.subscriptions.add(
       this.authService.isLoggedIn$.subscribe((loggedIn) => {
         this.isLoggedIn = loggedIn;
-        // Si está autenticado, suscribirse al carrito del backend
         if (this.isLoggedIn) {
           this.cartService.refreshCart().subscribe();
           this.subscriptions.add(
@@ -64,13 +62,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
             })
           );
         } else {
-          // Si es anónimo, suscribirse al carrito local
           this.subscriptions.add(
             this.localCartService.cartCount$.subscribe((count) => {
               this.cartCount = count;
             })
           );
         }
+      })
+    );
+
+    this.subscriptions.add(
+      this.authService.isAdmin$.subscribe((admin) => {
+        this.isAdmin = admin;
       })
     );
 
@@ -144,5 +147,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       queryParams: { token: null },
       queryParamsHandling: 'merge',
     });
+  }
+
+  reloadPage(event: Event): void {
+    event.preventDefault(); // Evita la navegación por defecto de Angular
+    window.location.href = '/'; // Fuerza la recarga completa de la página
   }
 }

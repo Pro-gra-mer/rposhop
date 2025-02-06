@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.categoryService.loadCategories();
     this.categoryService.categories$.subscribe((cats) => {
       this.categories = cats;
       // Si existen categorías, selecciona la primera por defecto
@@ -38,7 +39,6 @@ export class HomeComponent implements OnInit {
         this.onCategorySelected(cats[0]);
       }
     });
-    this.categoryService.loadCategories();
   }
 
   onCategorySelected(category: Category): void {

@@ -113,6 +113,8 @@ export class AuthService {
     );
 
     this.localCartService.setCartCount(0);
+
+    window.location.href = '/'; // Fuerza la recarga completa de la página
   }
 
   // Restaurar sesión

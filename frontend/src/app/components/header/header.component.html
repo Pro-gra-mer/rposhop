@@ -5,7 +5,11 @@
     <!-- Logo -->
     <div class="flex items-center space-x-2">
       <img src="favicon.ico" alt="Logo" class="h-16 w-16" />
-      <a [routerLink]="['/']" class="font-bold text-primary text-3xl">
+      <a
+        href="/"
+        (click)="reloadPage($event)"
+        class="font-bold text-primary text-3xl"
+      >
         <span class="rpo">RPO</span>Shop
       </a>
     </div>
