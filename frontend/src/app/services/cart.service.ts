@@ -6,12 +6,13 @@ import { tap } from 'rxjs/operators';
 import { Cart } from '../models/Cart';
 import { CartMergeRequest } from '../models/CartMergeRequest ';
 import { LocalCartService } from './local-cart.service';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8080/api/cart';
+  private apiUrl = `${environment.apiUrl}/cart`;
   private cartSubject: BehaviorSubject<Cart | null> =
     new BehaviorSubject<Cart | null>(null);
   public cart$ = this.cartSubject.asObservable();

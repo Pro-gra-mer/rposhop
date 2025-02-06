@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 import { Product } from '../models/Product';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private apiUrl = 'http://localhost:8080/api/products';
+  private apiUrl = `${environment.apiUrl}/products`;
+
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$ = this.productsSubject.asObservable();
   private searchResultsSubject = new BehaviorSubject<Product[]>([]);

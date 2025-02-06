@@ -4,12 +4,13 @@ import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 import { CartService } from './cart.service';
 import { Cart } from '../models/Cart';
 import { LocalCartService } from './local-cart.service';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   // BehaviorSubjects para manejar el estado de autenticación y el rol del usuario
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);

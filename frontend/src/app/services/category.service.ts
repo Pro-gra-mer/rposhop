@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
+import { environment } from '../../environments/environment.prod';
 
 interface Category {
   id: number;
@@ -11,7 +12,7 @@ interface Category {
   providedIn: 'root',
 })
 export class CategoryService {
-  private apiUrl = 'http://localhost:8080/api/categories';
+  private apiUrl = `${environment.apiUrl}/categories`;
 
   // BehaviorSubject para actualizar las categorías en tiempo real
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
