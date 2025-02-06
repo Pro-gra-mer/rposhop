@@ -7,7 +7,6 @@ import { environment } from '../../environments/environment.prod';
 @Injectable({ providedIn: 'root' })
 export class ProductService {
   private apiUrl = `${environment.apiUrl}/products`;
-
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$ = this.productsSubject.asObservable();
   private searchResultsSubject = new BehaviorSubject<Product[]>([]);
