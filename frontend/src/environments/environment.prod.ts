@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://rposhop-production.up.railway.app/api',
+  apiUrl: 'https://rposhop-backend-latest.onrender.com/api',
 };

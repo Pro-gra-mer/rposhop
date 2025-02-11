@@ -49,7 +49,7 @@ public class AuthController {
             User newUser = userService.registerUser(request);
 
             // Generar el enlace de activación
-            String activationLink = "https://rposhop-production.up.railway.app/api/auth/activate?token=" + newUser.getActivationToken();
+            String activationLink = "https://rposhop-backend-latest.onrender.com/api/auth/activate?token=" + newUser.getActivationToken();
 
             emailService.sendEmail(
                     newUser.getEmail(),
