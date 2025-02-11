@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, input, OnInit } from '@angular/core';
 import { Category } from '../../models/Category';
 import { Product } from '../../models/Product';
 import { ProductService } from '../../services/product.service';
@@ -23,7 +23,8 @@ import { ProductListComponent } from '../../components/product-list/product-list
 export class HomeComponent implements OnInit {
   categories: Category[] = [];
   products: Product[] = [];
-  selectedCategoryId: number | null = null; // propiedad para la categoría seleccionada
+  selectedCategoryId: number | null = null;
+  isMenuOpen: boolean = false; // Estado del menú desplegable
 
   constructor(
     private categoryService: CategoryService,
@@ -34,7 +35,6 @@ export class HomeComponent implements OnInit {
     this.categoryService.loadCategories();
     this.categoryService.categories$.subscribe((cats) => {
       this.categories = cats;
-      // Si existen categorías, selecciona la primera por defecto
       if (cats.length > 0) {
         this.onCategorySelected(cats[0]);
       }
@@ -49,5 +49,18 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => console.error(err),
     });
+    this.closeMenu(); // Cierra el menú al seleccionar una categoría
+  }
+
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen = false;
+  }
+
+  selectCategory(category: Category): void {
+    this.onCategorySelected(category);
   }
 }

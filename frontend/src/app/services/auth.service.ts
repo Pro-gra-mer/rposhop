@@ -9,7 +9,7 @@ import { LocalCartService } from './local-cart.service';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/auth';
 
   // BehaviorSubjects para manejar el estado de autenticación y el rol del usuario
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);

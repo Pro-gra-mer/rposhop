@@ -11,7 +11,7 @@ import { LocalCartService } from './local-cart.service';
   providedIn: 'root',
 })
 export class CartService {
-  private apiUrl = 'http://localhost:8080/api/cart';
+  private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/cart';
   private cartSubject: BehaviorSubject<Cart | null> =
     new BehaviorSubject<Cart | null>(null);
   public cart$ = this.cartSubject.asObservable();

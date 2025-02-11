@@ -5,7 +5,7 @@ import { Product } from '../models/Product';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
-  private apiUrl = 'http://localhost:8080/api/products';
+  private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/products';
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$ = this.productsSubject.asObservable();
   private searchResultsSubject = new BehaviorSubject<Product[]>([]);

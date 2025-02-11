@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configuración CORS
                 .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ping").permitAll()
                         // Rutas públicas de Swagger
                         .requestMatchers(
                                 "/swagger-ui/**",
@@ -66,9 +67,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Cambia esto según el origen del frontend
+        configuration.setAllowedOrigins(Arrays.asList("https://rposhop.netlify.app", "https://rposhop-backend-latest.onrender.com")); // Cambia esto según el origen del frontend
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json", "Accept", "Origin", "X-Requested-With"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

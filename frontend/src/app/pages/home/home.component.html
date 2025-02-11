@@ -1,11 +1,41 @@
-<div class="flex w-full h-full">
-  <!-- Sidebar -->
+<div class="flex flex-col md:flex-row w-full h-full">
+  <!-- Botón de menú para móvil -->
+  <div class="md:hidden p-4 bg-gray-100">
+    <button (click)="toggleMenu()">☰ Menú</button>
+  </div>
+
+  <!-- Sidebar (visible en pantalla grande) -->
   <app-sidebar
+    class="hidden md:block md:w-64"
     [categories]="categories"
     [selectedCategoryId]="selectedCategoryId"
     (categorySelected)="onCategorySelected($event)"
   >
   </app-sidebar>
+
+  <!-- Menú desplegable para móvil -->
+  <div
+    *ngIf="isMenuOpen"
+    class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+    (click)="closeMenu()"
+  ></div>
+  <div
+    *ngIf="isMenuOpen"
+    class="md:hidden fixed inset-y-0 left-0 w-64 bg-white z-50"
+  >
+    <div class="p-4">
+      <h2 class="text-xl font-bold mb-4">Categorías</h2>
+      <ul>
+        <li
+          *ngFor="let category of categories"
+          (click)="selectCategory(category)"
+          class="cursor-pointer hover:bg-gray-100 p-2"
+        >
+          {{ category.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
 
   <!-- Contenido principal -->
   <div class="flex-grow p-4">

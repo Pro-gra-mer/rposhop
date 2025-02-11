@@ -49,7 +49,7 @@ public class AuthController {
             User newUser = userService.registerUser(request);
 
             // Generar el enlace de activación
-            String activationLink = "http://localhost:8080/api/auth/activate?token=" + newUser.getActivationToken();
+            String activationLink = "https://rposhop-backend-latest.onrender.com/api/auth/activate?token=" + newUser.getActivationToken();
             emailService.sendEmail(
                     newUser.getEmail(),
                     "Activación de Cuenta",
@@ -115,12 +115,12 @@ public class AuthController {
         if (activated) {
             // Redirigir al frontend con un mensaje de éxito
             HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(URI.create("http://localhost:4200/?activationSuccess=true"));
+            headers.setLocation(URI.create("rposhop.netlify.app/?activationSuccess=true"));
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         } else {
             // Redirigir al frontend con un mensaje de error
             HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(URI.create("http://localhost:4200/?activationError=true"));
+            headers.setLocation(URI.create("rposhop.netlify.app/?activationError=true"));
             return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
     }

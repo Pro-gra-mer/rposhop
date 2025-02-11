@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 
 interface Category {
   id: number;
@@ -11,7 +11,7 @@ interface Category {
   providedIn: 'root',
 })
 export class CategoryService {
-  private apiUrl = 'http://localhost:8080/api/categories';
+  private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/categories';
 
   // BehaviorSubject para actualizar las categorías en tiempo real
   private categoriesSubject = new BehaviorSubject<Category[]>([]);
@@ -38,6 +38,9 @@ export class CategoryService {
     return this.http
       .post<Category>(this.apiUrl, category, { headers: this.getHeaders() })
       .pipe(
+        tap(() => {
+          this.loadCategories(); // Recargar la lista después de añadir
+        }),
         catchError((error) => {
           console.error('Error al añadir categoría', error);
           return throwError(() => new Error('No se pudo añadir la categoría.'));
