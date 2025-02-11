@@ -50,10 +50,7 @@ public class AuthController {
 
             // Generar el enlace de activación
             String activationLink = "https://rposhop-backend-latest.onrender.com/api/auth/activate?token=" + newUser.getActivationToken();
-<<<<<<< HEAD
-=======
 
->>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
             emailService.sendEmail(
                     newUser.getEmail(),
                     "Activación de Cuenta",
@@ -116,26 +113,18 @@ public class AuthController {
     public ResponseEntity<Void> activateAccount(@RequestParam String token) {
         boolean activated = userService.activateUser(token);
 
+        HttpHeaders headers = new HttpHeaders();
         if (activated) {
             // Redirigir al frontend con un mensaje de éxito
-            HttpHeaders headers = new HttpHeaders();
-<<<<<<< HEAD
-            headers.setLocation(URI.create("rposhop.netlify.app/?activationSuccess=true"));
-=======
             headers.setLocation(URI.create("https://rposhop.netlify.app/?activationSuccess=true"));
->>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
-            return new ResponseEntity<>(headers, HttpStatus.FOUND);
         } else {
             // Redirigir al frontend con un mensaje de error
-            HttpHeaders headers = new HttpHeaders();
-<<<<<<< HEAD
-            headers.setLocation(URI.create("rposhop.netlify.app/?activationError=true"));
-=======
             headers.setLocation(URI.create("https://rposhop.netlify.app/?activationError=true"));
->>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
-            return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
+
 
 
     @Operation(summary = "Solicitar restablecimiento de contraseña", description = "Envía un correo para restablecer la contraseña del usuario.")

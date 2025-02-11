@@ -25,8 +25,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configuración CORS
+                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para simplificar
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/ping").permitAll()
                         // Rutas públicas de Swagger
@@ -36,7 +36,7 @@ public class SecurityConfig {
                                 "/v3/api-docs.yaml",
                                 "/swagger-ui.html"
                         ).permitAll()
-                        // Rutas públicas de autenticación
+                        // Rutas públicas
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login",
@@ -44,22 +44,16 @@ public class SecurityConfig {
                                 "/api/auth/reset-password",
                                 "/api/auth/activate"
                         ).permitAll()
-                        // Rutas de carrito: restringir solo a usuarios autenticados
-                        .requestMatchers(HttpMethod.GET, "/api/cart/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/cart/add").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/cart/update").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/cart/remove").authenticated()
-                        // Rutas de productos: disponibles públicamente
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        // Rutas de categorías: disponibles públicamente
+                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/cart/**").permitAll()
+                        // ✅ PERMITIR GET EN CATEGORÍAS (Público)
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                        // Rutas protegidas por rol
+                        // ✅ RESTRINGIR POST/DELETE PARA SOLO ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/categories").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/categories/**").hasRole("ADMIN")
-                        // Rutas protegidas por rol de admin y user
+                        // Rutas protegidas por rol
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasRole("USER")
-                        .anyRequest().authenticated() // Resto de rutas protegidas
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
@@ -73,20 +67,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-<<<<<<< HEAD
         configuration.setAllowedOrigins(Arrays.asList("https://rposhop.netlify.app", "https://rposhop-backend-latest.onrender.com")); // Cambia esto según el origen del frontend
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json", "Accept", "Origin", "X-Requested-With"));
-=======
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://rposhop.netlify.app",
-                "https://rposhop-backend-latest.onrender.com"
-        ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "application/json", "X-Requested-With", "Origin", "Accept"));
->>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
-        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 
