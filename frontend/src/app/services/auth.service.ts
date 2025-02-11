@@ -4,12 +4,17 @@ import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 import { CartService } from './cart.service';
 import { Cart } from '../models/Cart';
 import { LocalCartService } from './local-cart.service';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+<<<<<<< HEAD
   private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/auth';
+=======
+  private apiUrl = `${environment.apiUrl}/auth`;
+>>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
 
   // BehaviorSubjects para manejar el estado de autenticación y el rol del usuario
   private isLoggedInSubject = new BehaviorSubject<boolean>(false);

@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+<<<<<<< HEAD
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
+=======
+import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
+import { environment } from '../../environments/environment.prod';
+>>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
 
 interface Category {
   id: number;
@@ -11,7 +16,11 @@ interface Category {
   providedIn: 'root',
 })
 export class CategoryService {
+<<<<<<< HEAD
   private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/categories';
+=======
+  private apiUrl = `${environment.apiUrl}/categories`;
+>>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
 
   // BehaviorSubject para actualizar las categorías en tiempo real
   private categoriesSubject = new BehaviorSubject<Category[]>([]);

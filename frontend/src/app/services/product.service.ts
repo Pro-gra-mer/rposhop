@@ -2,10 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, throwError } from 'rxjs';
 import { Product } from '../models/Product';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
+<<<<<<< HEAD
   private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/products';
+=======
+  private apiUrl = `${environment.apiUrl}/products`;
+>>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products$ = this.productsSubject.asObservable();
   private searchResultsSubject = new BehaviorSubject<Product[]>([]);

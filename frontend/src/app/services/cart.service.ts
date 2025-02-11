@@ -6,12 +6,17 @@ import { tap } from 'rxjs/operators';
 import { Cart } from '../models/Cart';
 import { CartMergeRequest } from '../models/CartMergeRequest ';
 import { LocalCartService } from './local-cart.service';
+import { environment } from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
+<<<<<<< HEAD
   private apiUrl = 'https://rposhop-backend-latest.onrender.com/api/cart';
+=======
+  private apiUrl = `${environment.apiUrl}/cart`;
+>>>>>>> 83f34f57bdc1b09fb1c5b672182bc29bdfc39d4e
   private cartSubject: BehaviorSubject<Cart | null> =
     new BehaviorSubject<Cart | null>(null);
   public cart$ = this.cartSubject.asObservable();
