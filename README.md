@@ -38,10 +38,10 @@
 - **Documentación API:** Swagger  
 
 ### **Despliegue**  
-✅ **Frontend:** Netlify  
-✅ **Backend:** Render  
-✅ **Base de datos:** Railway  
-✅ **Contenerización:** Docker para entornos locales y de producción  
+- **Frontend:** Netlify
+- **Backend:** Render  
+- **Base de datos:** Railway  
+- **Contenerización:** Docker para entornos locales y de producción  
 
 ---
 
