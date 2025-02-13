@@ -26,16 +26,16 @@
 
 
 ### **Frontend (Angular 17)**  
-- 🖥 **Framework:** Angular con componentes standalone  
-- 🎨 **Estilos:** TailwindCSS  
-- 🔀 **Rutas:** Angular Router  
-- 📊 **Gestión de estado:** BehaviorSubject  
+- **Framework:** Angular con componentes standalone  
+- **Estilos:** TailwindCSS  
+- **Rutas:** Angular Router  
+- **Gestión de estado:** BehaviorSubject  
 
 ### **Backend (Spring Boot 3)**  
-- 🔐 **Seguridad:** Spring Security con JWT  
-- 🗄 **Base de datos:** MySQL (en Railway)  
-- 📜 **ORM:** Hibernate con JPA  
-- 📖 **Documentación API:** Swagger  
+- **Seguridad:** Spring Security con JWT  
+- **Base de datos:** MySQL (en Railway)  
+- **ORM:** Hibernate con JPA  
+- **Documentación API:** Swagger  
 
 ### **Despliegue**  
 ✅ **Frontend:** Netlify  
