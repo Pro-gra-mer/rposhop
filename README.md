@@ -45,7 +45,7 @@
 
 ---
 
-## 🛠 Instalación y Configuración  
+## ⚙️ Instalación y Configuración  
 
 ### 🔹 **Requisitos Previos**  
 - Node.js y Angular CLI (`npm install -g @angular/cli`)  
