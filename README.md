@@ -3,7 +3,7 @@
 ![RPOShop Banner](https://res.cloudinary.com/dl7on9tjj/image/upload/v1739382135/Captura_de_pantalla_364_wmfniy.png)
 
 ## 🚀 Introducción  
-**RPOShop** es una tienda online de ropa deportiva que permite a los usuarios explorar productos, agregarlos al carrito y gestionar compras de manera intuitiva. La aplicación cuenta con autenticación, zona de administración y un diseño moderno y responsive.  
+**RPOShop** es una tienda online de ropa deportiva que permite a los usuarios explorar productos y agregarlos al carrito de manera intuitiva. La aplicación cuenta con autenticación, zona de administración y un diseño moderno y responsive.  
 
 🔗 **Demo en Vivo:** [RPOShop](https://rposhop.netlify.app/)  
 🔗 **Documentación API (Swagger):** [Swagger UI](https://rposhop-backend-latest.onrender.com/swagger-ui/index.html)  
