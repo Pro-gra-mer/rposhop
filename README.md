@@ -17,7 +17,7 @@
 ✅ **Barra de búsqueda:** Búsqueda dinámica de productos.  
 ✅ **Zona de administración:** CRUD de productos y categorías (solo para administradores).  
 ✅ **Diseño responsive:** Adaptado para móviles y escritorio.  
-✅ **Integración con servicios externos:** Cloudinary (imágenes), Railway (Base de datos), Render (Backend), Netlify (Frontend).  
+✅ **Integración con servicios externos:** Railway (Base de datos), Render (Backend), Netlify (Frontend).  
 
 ---
 
